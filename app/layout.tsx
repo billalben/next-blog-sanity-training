@@ -32,5 +32,3 @@ export default function RootLayout({
     </html>
   );
 }
-
-// max-w-4xl mx-auto px-4
