@@ -1,20 +1,23 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { simpleBlogCard } from "../lib/interface";
-import { client, urlFor } from "../lib/sanity";
 import Image from "next/image";
 import Link from "next/link";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { simpleBlogCard } from "../lib/interface";
+import { client, urlFor } from "../lib/sanity";
+import dayjs from "dayjs";
+
+export const revalidate = 30; // revalidate at most 30 seconds
 
 async function getData() {
   const query = `*[_type == "blog"] | order(_createdAt desc) {
     title,
-      smallDescription,
-      "currentSlug": slug.current,
-      titleImage
+    smallDescription,
+    "currentSlug": slug.current,
+    titleImage,
+    _updatedAt
   }`;
 
   const data = await client.fetch(query);
-
   return data;
 }
 
@@ -22,7 +25,7 @@ export default async function Home() {
   const data: simpleBlogCard[] = await getData();
 
   return (
-    <div className="mt-5 grid gap-5 sm:grid-cols-2">
+    <div className="my-6 grid gap-5 sm:grid-cols-2">
       {data.map((post, idx) => (
         <Card key={idx}>
           <Image
@@ -42,6 +45,9 @@ export default async function Home() {
               title={post.smallDescription}
             >
               {post.smallDescription}
+            </p>
+            <p className="mt-2 text-right text-xs font-semibold text-gray-600 dark:text-gray-300">
+              {dayjs(post._updatedAt).format("MMM D, YYYY")}
             </p>
             <Button asChild className="mt-7 w-full">
               <Link href={`/blog/${post.currentSlug}`}>Read More</Link>
