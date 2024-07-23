@@ -1,12 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
+import dayjs from "dayjs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { simpleBlogCard } from "../lib/interface";
 import { client, urlFor } from "../lib/sanity";
-import dayjs from "dayjs";
 
-export const revalidate = 30; // revalidate at most 30 seconds
+export const revalidate = 600; // relevant for ISR 10 minutes
 
 async function getData() {
   const query = `*[_type == "blog"] | order(_createdAt desc) {

@@ -1,10 +1,11 @@
-import { PortableText } from "@portabletext/react";
 import Image from "next/image";
+import { Metadata } from "next";
+import { PortableText } from "@portabletext/react";
+import dayjs from "dayjs";
 import { client, urlFor } from "../../../lib/sanity";
 import { fullBlog } from "../../../lib/interface";
-import dayjs from "dayjs";
 
-export const revalidate = 30; // revalidate at most 30 seconds
+export const revalidate = 600; // relevant for ISR 10 minutes
 
 async function getData(slug: string) {
   const query = `
@@ -18,6 +19,23 @@ async function getData(slug: string) {
 
   const data = await client.fetch(query);
   return data;
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}): Promise<Metadata> {
+  const slug = params.slug;
+
+  const title = slug
+    .replace(/-/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+
+  return {
+    title: title,
+    description: title,
+  };
 }
 
 export default async function BlogArticle({
